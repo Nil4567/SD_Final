@@ -1,0 +1,5 @@
+{
+  "name": "SD Prints Management",
+  "description": "A workflow, cash, and task management interface for SD Prints, a retail Xerox and printing counter, with admin control.",
+  "requestFramePermissions": []
+}

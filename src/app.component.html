@@ -1,0 +1,54 @@
+<div class="min-h-screen bg-gray-100 flex flex-col">
+  <!-- Navigation Bar -->
+  <nav class="bg-indigo-600 p-4 text-white shadow-md">
+    <div class="container mx-auto flex justify-between items-center">
+      <div class="flex items-center space-x-4">
+        @if (showBackButton()) {
+          <button (click)="goBack()" class="bg-indigo-700 hover:bg-indigo-800 text-white font-bold py-1 px-3 rounded-md transition-colors duration-200 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Back
+          </button>
+        }
+        <a [routerLink]="isLoggedIn() ? '/dashboard' : '/company-info'" class="text-2xl font-bold tracking-wide">Siddhivinayak Enterprises</a>
+      </div>
+
+      <div class="space-x-4 flex items-center">
+        <!-- Current Time Display -->
+        <span class="text-sm opacity-90 hidden md:inline-block">{{ currentTime() | date:'medium' }}</span>
+
+        @if (isLoggedIn()) {
+          <!-- User Info -->
+          <span class="text-sm opacity-90">Logged in as: <span class="font-semibold">{{ currentUser()?.name }}</span></span>
+
+          <a routerLink="/dashboard" routerLinkActive="font-bold underline" [routerLinkActiveOptions]="{exact: true}" class="hover:text-indigo-100 transition-colors">Dashboard</a>
+          <a routerLink="/orders" routerLinkActive="font-bold underline" class="hover:text-indigo-100 transition-colors">Orders</a>
+          <a routerLink="/order-database" routerLinkActive="font-bold underline" class="hover:text-indigo-100 transition-colors">Order Database</a>
+          <a routerLink="/customers" routerLinkActive="font-bold underline" class="hover:text-indigo-100 transition-colors">Customers</a>
+          <a routerLink="/tasks" routerLinkActive="font-bold underline" class="hover:text-indigo-100 transition-colors">Tasks</a>
+          <a routerLink="/users" routerLinkActive="font-bold underline" class="hover:text-indigo-100 transition-colors">Users</a>
+          @if (currentUser()?.id === 'admin-superuser') {
+            <a routerLink="/settings" routerLinkActive="font-bold underline" class="hover:text-indigo-100 transition-colors">Settings</a>
+          }
+          <button (click)="logout()" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded-md transition-colors duration-200 ml-4">Logout</button>
+        } @else {
+          <a routerLink="/company-info" routerLinkActive="font-bold underline" [routerLinkActiveOptions]="{exact: true}" class="hover:text-indigo-100 transition-colors">Company Info</a>
+          <a routerLink="/login" routerLinkActive="font-bold underline" class="bg-white text-indigo-700 hover:bg-indigo-100 font-bold py-1 px-3 rounded-md transition-colors duration-200 ml-4">Staff Login</a>
+        }
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content Area -->
+  <main class="flex-grow container mx-auto p-6">
+    <router-outlet></router-outlet>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 p-4 text-white text-center text-sm mt-8">
+    <div class="container mx-auto">
+      &copy; 2024 Siddhivinayak Enterprises Management. All rights reserved.
+    </div>
+  </footer>
+</div>

@@ -1,0 +1,107 @@
+
+
+
+<h1 class="text-3xl font-bold text-gray-800 mb-6">{{ isEditMode ? 'Edit Task' : 'Create New Task' }}</h1>
+
+<form [formGroup]="taskForm" (ngSubmit)="onSubmit()" class="space-y-6">
+  <!-- Description -->
+  <div>
+    <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+    <input
+      id="description"
+      type="text"
+      formControlName="description"
+      class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+      placeholder="e.g., Restock A4 paper"
+    >
+    @if (formControl['description'].invalid && (formControl['description'].dirty || formControl['description'].touched)) {
+      <p class="mt-1 text-sm text-red-600">Description is required.</p>
+    }
+  </div>
+
+  <!-- Assigned To -->
+  <div>
+    <label for="assignedToUserId" class="block text-sm font-medium text-gray-700">Assigned To</label>
+    <select
+      id="assignedToUserId"
+      formControlName="assignedToUserId"
+      class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+    >
+      <option value="">Unassigned</option>
+      @for (user of users(); track user.id) {
+        @if (user.role === 'Staff' || user.role === 'Admin') {
+          <option [value]="user.id">{{ user.name }} ({{user.role}})</option>
+        }
+      }
+    </select>
+  </div>
+
+  <!-- Due Date -->
+  <div>
+    <label for="dueDate" class="block text-sm font-medium text-gray-700">Due Date</label>
+    <input
+      id="dueDate"
+      type="date"
+      formControlName="dueDate"
+      class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+    >
+    @if (formControl['dueDate'].invalid && (formControl['dueDate'].dirty || formControl['dueDate'].touched)) {
+      <p class="mt-1 text-sm text-red-600">Due Date is required.</p>
+    }
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- Status -->
+    <div>
+      <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
+      <select
+        id="status"
+        formControlName="status"
+        class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+      >
+        <option value="Open">Open</option>
+        <option value="In Progress">In Progress</option>
+        <option value="Done">Done</option>
+      </select>
+    </div>
+
+    <!-- Priority -->
+    <div>
+      <label for="priority" class="block text-sm font-medium text-gray-700">Priority</label>
+      <select
+        id="priority"
+        formControlName="priority"
+        class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+      >
+        <option value="Low">Low</option>
+        <option value="Medium">Medium</option>
+        <option value="High">High</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="flex justify-end space-x-4">
+    <button
+      type="button"
+      routerLink="/tasks"
+      class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+    >
+      Cancel
+    </button>
+    <button
+      type="submit"
+      [disabled]="taskForm.invalid || isSaving()"
+      class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed w-32"
+    >
+      @if (isSaving()) {
+        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        Saving...
+      } @else {
+        <span>{{ isEditMode ? 'Update Task' : 'Create Task' }}</span>
+      }
+    </button>
+  </div>
+</form>

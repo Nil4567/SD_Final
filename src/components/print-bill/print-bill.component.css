@@ -1,0 +1,21 @@
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  
+  app-print-bill, app-print-bill * {
+    visibility: visible;
+  }
+
+  app-print-bill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+
+  .print-hidden {
+    display: none !important;
+  }
+}

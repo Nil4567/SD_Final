@@ -1,0 +1,66 @@
+
+<div class="p-6 bg-white rounded-lg shadow-md max-w-4xl mx-auto">
+  <div class="flex justify-between items-center mb-6">
+    <div>
+       <h1 class="text-3xl font-bold text-gray-800 mb-2">Admin Settings</h1>
+       <p class="text-gray-600">Configure the connection to your Google Apps Script backend.</p>
+    </div>
+    <button (click)="toggleGuide()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md shadow-lg transition-colors duration-200 flex items-center">
+       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+      </svg>
+      {{ showGuide() ? 'Hide' : 'Show' }} Setup Guide
+    </button>
+  </div>
+  
+  @if (showGuide()) {
+    <app-apps-script-guide />
+  }
+
+  <form [formGroup]="settingsForm" (ngSubmit)="onSubmit()" class="space-y-6 pt-6 border-t mt-6">
+    <!-- Script URL -->
+    <div>
+      <label for="scriptUrl" class="block text-sm font-medium text-gray-700">Google Apps Script URL</label>
+      <input
+        id="scriptUrl"
+        type="url"
+        formControlName="scriptUrl"
+        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        placeholder="https://script.google.com/macros/s/..."
+      >
+      @if (formControl['scriptUrl'].invalid && (formControl['scriptUrl'].dirty || formControl['scriptUrl'].touched)) {
+        <p class="mt-1 text-sm text-red-600">The Google Apps Script URL is a required field.</p>
+      }
+    </div>
+
+    <!-- Security Token -->
+    <div>
+      <label for="securityToken" class="block text-sm font-medium text-gray-700">Security Token</label>
+      <input
+        id="securityToken"
+        type="password"
+        formControlName="securityToken"
+        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        placeholder="Enter the security token from your script"
+      >
+       @if (formControl['securityToken'].invalid && (formControl['securityToken'].dirty || formControl['securityToken'].touched)) {
+        <p class="mt-1 text-sm text-red-600">Security Token is required.</p>
+      }
+    </div>
+
+    <div class="flex justify-end items-center space-x-4 pt-4">
+      @if (saveStatus() === 'success') {
+        <span class="text-green-600 font-medium">Settings saved successfully!</span>
+      }
+      @if (saveStatus() === 'error' && settingsForm.invalid) {
+         <span class="text-red-600 font-medium">Please fix the highlighted errors before saving.</span>
+      }
+      <button
+        type="submit"
+        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+      >
+        Save Settings
+      </button>
+    </div>
+  </form>
+</div>

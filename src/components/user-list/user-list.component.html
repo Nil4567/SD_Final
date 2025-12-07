@@ -1,0 +1,104 @@
+@if (loading()) {
+  <div class="flex flex-col items-center justify-center p-10 bg-white rounded-lg shadow-md">
+    <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-indigo-600"></div>
+    <p class="mt-4 text-xl text-gray-700">Loading Users...</p>
+  </div>
+} @else {
+  <div class="p-6 bg-white rounded-lg shadow-md">
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-3xl font-bold text-gray-800">User Management</h1>
+      @if (isAdmin()) {
+        <a routerLink="/users/new" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md shadow-lg transition-colors duration-200 flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+          </svg>
+          Add New User
+        </a>
+      }
+    </div>
+
+    <div class="overflow-x-auto bg-white rounded-lg shadow-inner border">
+      @if (users().length > 0) {
+        <table class="min-w-full leading-normal">
+          <thead>
+            <tr class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+              <th class="py-3 px-6 text-left">Name</th>
+              <th class="py-3 px-6 text-left">Role</th>
+              @if (isAdmin()) {
+                <th class="py-3 px-6 text-center">Actions</th>
+              }
+            </tr>
+          </thead>
+          <tbody class="text-gray-700 text-sm font-light">
+            @for (user of users(); track user.id) {
+              <tr class="border-b border-gray-200 hover:bg-gray-50">
+                <td class="py-3 px-6 text-left whitespace-nowrap">{{ user.name }}</td>
+                <td class="py-3 px-6 text-left">
+                  <span
+                    class="py-1 px-3 rounded-full text-xs font-medium"
+                    [class.bg-purple-200]="user.role === 'Admin'"
+                    [class.text-purple-800]="user.role === 'Admin'"
+                    [class.bg-indigo-200]="user.role === 'Staff'"
+                    [class.text-indigo-800]="user.role === 'Staff'"
+                  >{{ user.role }}</span>
+                </td>
+                @if (isAdmin()) {
+                  <td class="py-3 px-6 text-center">
+                    <div class="flex item-center justify-center space-x-2">
+                      @if (user.id === 'admin-superuser') {
+                        <span class="w-6 h-6 text-gray-300 cursor-not-allowed" title="The Super Admin account is built-in and cannot be edited.">
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                          </svg>
+                        </span>
+                        <span class="w-6 h-6 text-gray-300 cursor-not-allowed" title="The Super Admin account is built-in and cannot be deleted.">
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        </span>
+                      } @else {
+                        <a [routerLink]="['/users/edit', user.id]" class="w-6 h-6 transform hover:text-indigo-500 hover:scale-110" title="Edit User" aria-label="Edit User">
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                          </svg>
+                        </a>
+                        <button (click)="deleteUser(user.id)" class="w-6 h-6 transform hover:text-red-500 hover:scale-110" title="Delete User" aria-label="Delete User">
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        </button>
+                      }
+                    </div>
+                  </td>
+                }
+              </tr>
+            }
+          </tbody>
+        </table>
+      } @else {
+        <p class="p-4 text-gray-600">No users found in the Google Sheet.</p>
+      }
+    </div>
+
+    <div class="text-right text-xs text-gray-500 mt-2">
+      @if (lastUpdated()) {
+        <span class="flex items-center justify-end">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+          </svg>
+          Live sync active. Last updated: {{ lastUpdated() | date:'mediumTime' }}
+        </span>
+      } @else {
+        <span>Syncing...</span>
+      }
+    </div>
+    
+    <p class="text-gray-600 text-sm mt-4">
+      @if (isAdmin()) {
+        Note: You can add, edit, and delete users here. Changes will be saved to the Google Sheet. The Super Admin account is built-in and cannot be modified.
+      } @else {
+        Note: User data is fetched from the backend. Contact an administrator to manage users.
+      }
+    </p>
+  </div>
+}

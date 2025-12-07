@@ -1,0 +1,77 @@
+
+@if (loading()) {
+  <div class="flex flex-col items-center justify-center p-10 bg-white rounded-lg shadow-md">
+    <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-indigo-600"></div>
+    <p class="mt-4 text-xl text-gray-700">Loading Completed Orders...</p>
+  </div>
+} @else {
+  <div class="p-6 bg-white rounded-lg shadow-md">
+    <div class="flex justify-between items-center mb-6">
+       <h1 class="text-3xl font-bold text-gray-800">Completed Orders Database</h1>
+       <a routerLink="/orders" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md shadow-lg transition-colors duration-200 flex items-center">
+         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+        Back to Active Orders
+      </a>
+    </div>
+   
+
+    @if (completedOrders().length > 0) {
+      <div class="overflow-x-auto bg-white rounded-lg shadow-inner border">
+        <table class="min-w-full leading-normal">
+          <thead>
+            <tr class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+              <th class="py-3 px-6 text-left">Order No.</th>
+              <th class="py-3 px-6 text-left">Customer</th>
+              <th class="py-3 px-6 text-left">Job</th>
+              <th class="py-3 px-6 text-center">TAT (Days)</th>
+              <th class="py-3 px-6 text-center">Urgency</th>
+              <th class="py-3 px-6 text-center">Total</th>
+              <th class="py-3 px-6 text-center">Payment</th>
+              <th class="py-3 px-6 text-left">Handled By</th>
+              <th class="py-3 px-6 text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="text-gray-700 text-sm font-light">
+            @for (order of completedOrders(); track order.id) {
+              <tr class="border-b border-gray-200 hover:bg-gray-50">
+                <td class="py-3 px-6 text-left whitespace-nowrap font-semibold">#{{ order.orderNo }}</td>
+                <td class="py-3 px-6 text-left whitespace-nowrap">{{ order.customerName }}</td>
+                <td class="py-3 px-6 text-left max-w-xs truncate" [title]="order.jobDescription">{{ order.jobDescription }}</td>
+                <td class="py-3 px-6 text-center font-semibold">{{ calculateTAT(order) }}</td>
+                <td class="py-3 px-6 text-center">
+                   <span class="py-1 px-3 rounded-full text-xs font-medium" [class.bg-gray-200]="order.jobUrgency === 'Normal'" [class.text-gray-800]="order.jobUrgency === 'Normal'" [class.bg-yellow-200]="order.jobUrgency === 'High'" [class.text-yellow-800]="order.jobUrgency === 'High'" [class.bg-red-200]="order.jobUrgency === 'Urgent'" [class.text-red-800]="order.jobUrgency === 'Urgent'">{{ order.jobUrgency }}</span>
+                </td>
+                <td class="py-3 px-6 text-center font-semibold">{{ order.totalAmount | currency:'INR':'symbol-narrow':'1.2-2' }}</td>
+                <td class="py-3 px-6 text-center">
+                  <span class="py-1 px-3 rounded-full text-xs font-medium" [class.bg-red-200]="order.paymentStatus === 'Pending'" [class.text-red-800]="order.paymentStatus === 'Pending'" [class.bg-green-200]="order.paymentStatus === 'Paid'" [class.text-green-800]="order.paymentStatus === 'Paid'">{{ order.paymentStatus }}</span>
+                </td>
+                <td class="py-3 px-6 text-left">{{ getUserName(order.assignedToUserId) }}</td>
+                <td class="py-3 px-6 text-center">
+                  <div class="flex item-center justify-center">
+                    @if (order.paymentStatus === 'Paid') {
+                      <button (click)="shareBill(order)" class="w-6 h-6 transform hover:text-green-500 hover:scale-110" title="View & Share Bill" aria-label="View & Share Bill">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                      </button>
+                    } @else {
+                       <span class="w-6 h-6 text-gray-300 cursor-not-allowed" title="Bill can only be shared for paid orders.">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                          </svg>
+                        </span>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <p class="text-gray-600 p-4 text-center">No completed orders found.</p>
+    }
+  </div>
+}

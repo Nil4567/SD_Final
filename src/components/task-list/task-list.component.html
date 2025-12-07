@@ -1,0 +1,90 @@
+
+@if (loading()) {
+  <div class="flex flex-col items-center justify-center p-10 bg-white rounded-lg shadow-md">
+    <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-indigo-600"></div>
+    <p class="mt-4 text-xl text-gray-700">Loading Tasks...</p>
+  </div>
+} @else {
+  <div class="p-6 bg-white rounded-lg shadow-md">
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">Task Management</h1>
+
+    <div class="flex justify-end mb-6">
+      <a routerLink="/tasks/new" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md shadow-lg transition-colors duration-200 flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+        </svg>
+        Add New Task
+      </a>
+    </div>
+
+    @if (tasks().length > 0) {
+      <div class="overflow-x-auto bg-white rounded-lg shadow-inner border">
+        <table class="min-w-full leading-normal">
+          <thead>
+            <tr class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+              <th class="py-3 px-6 text-left">Description</th>
+              <th class="py-3 px-6 text-left">Assigned To</th>
+              <th class="py-3 px-6 text-center">Due Date</th>
+              <th class="py-3 px-6 text-center">Status</th>
+              <th class="py-3 px-6 text-center">Priority</th>
+              <th class="py-3 px-6 text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="text-gray-700 text-sm font-light">
+            @for (task of tasks(); track task.id) {
+              <tr class="border-b border-gray-200 hover:bg-gray-50" 
+                  [class.bg-red-50]="task.priority === 'High'"
+                  [class.border-l-4]="task.priority === 'High'"
+                  [class.border-red-500]="task.priority === 'High'">
+                <td class="py-3 px-6 text-left whitespace-nowrap">
+                   <div class="flex items-center">
+                    @if (task.priority === 'High') {
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-red-500 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor" title="High Priority">
+                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.21 3.03-1.742 3.03H4.42c-1.532 0-2.492-1.696-1.742-3.03l5.58-9.92zM10 13a1 1 0 110-2 1 1 0 010 2zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                      </svg>
+                    }
+                    {{ task.description }}
+                  </div>
+                </td>
+                <td class="py-3 px-6 text-left">{{ getUserName(task.assignedToUserId) }}</td>
+                <td class="py-3 px-6 text-center">{{ task.dueDate | date:'shortDate' }}</td>
+                <td class="py-3 px-6 text-center">
+                  <select [value]="task.status"
+                          (change)="updateTaskStatus(task, $event)"
+                          class="appearance-none w-full pl-3 pr-8 py-1.5 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md font-medium"
+                          [class.bg-blue-100]="task.status === 'Open'" [class.text-blue-800]="task.status === 'Open'" 
+                          [class.bg-yellow-100]="task.status === 'In Progress'" [class.text-yellow-800]="task.status === 'In Progress'" 
+                          [class.bg-green-100]="task.status === 'Done'" [class.text-green-800]="task.status === 'Done'"
+                          [class.border-transparent]="true">
+                    <option value="Open">Open</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Done">Done</option>
+                  </select>
+                </td>
+                <td class="py-3 px-6 text-center">
+                  <span class="py-1 px-3 rounded-full text-xs font-medium" [class.bg-green-200]="task.priority === 'Low'" [class.text-green-800]="task.priority === 'Low'" [class.bg-yellow-200]="task.priority === 'Medium'" [class.text-yellow-800]="task.priority === 'Medium'" [class.bg-red-200]="task.priority === 'High'" [class.text-red-800]="task.priority === 'High'">{{ task.priority }}</span>
+                </td>
+                <td class="py-3 px-6 text-center">
+                  <div class="flex item-center justify-center space-x-2">
+                    <a [routerLink]="['/tasks/edit', task.id]" class="w-6 h-6 transform hover:text-indigo-500 hover:scale-110" title="Edit Task" aria-label="Edit Task">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                      </svg>
+                    </a>
+                    <button (click)="deleteTask(task.id)" class="w-6 h-6 transform hover:text-red-500 hover:scale-110" title="Delete Task" aria-label="Delete Task">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <p class="text-gray-600 p-4">No tasks found. Click "Add New Task" to create one.</p>
+    }
+  </div>
+}

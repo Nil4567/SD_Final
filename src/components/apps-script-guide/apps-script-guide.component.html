@@ -1,0 +1,60 @@
+
+<div class="p-6 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg mb-6">
+  <h2 class="text-2xl font-bold text-gray-800 mb-4">Backend Setup Guide</h2>
+  <div class="prose prose-indigo max-w-none">
+    <p>Follow these steps to connect the application to your own Google Sheet. This is a one-time setup.</p>
+    
+    <ol>
+      <li>
+        <strong>Create a Google Sheet:</strong> Go to <a href="https://sheets.new" target="_blank" rel="noopener noreferrer">sheets.new</a> to create a new, blank spreadsheet. Give it a name you'll remember, like "SD Prints Data".
+      </li>
+      <li>
+        <strong>Open the Apps Script Editor:</strong> In your new spreadsheet, go to the menu and click <code>Extensions > Apps Script</code>. This will open a new tab with the script editor.
+      </li>
+      <li>
+        <strong>Paste the Code:</strong> Delete any existing code in the <code>Code.gs</code> file and paste the entire script from the box below.
+      </li>
+      <li>
+        <strong>Set Your Secret Token:</strong> In the pasted code, find the line <code>const SECRET_TOKEN = "YOUR_SECRET_TOKEN_HERE";</code> and change <code>YOUR_SECRET_TOKEN_HERE</code> to a strong, private password of your choice. <strong>Remember this token!</strong>
+      </li>
+      <li>
+        <strong>Save the Script:</strong> Click the floppy disk icon (Save project) in the Apps Script editor toolbar.
+      </li>
+      <li>
+        <strong>Deploy as a Web App:</strong>
+        <ul>
+            <li>Click the blue <strong>"Deploy"</strong> button in the top right, then select <strong>"New deployment"</strong>.</li>
+            <li>Click the gear icon next to "Select type" and choose <strong>"Web app"</strong>.</li>
+            <li>In the "Web app" configuration:
+                <ul>
+                    <li>For "Execute as", select <strong>"Me (your email)"</strong>.</li>
+                    <li>For "Who has access", you <strong>MUST</strong> select <strong>"Anyone"</strong>. This is crucial for the app to work. It is secure because of our secret token.</li>
+                </ul>
+            </li>
+            <li>Click <strong>"Deploy"</strong>.</li>
+        </ul>
+      </li>
+      <li>
+        <strong>Authorize Permissions:</strong> The first time you deploy, Google will ask for permissions. Click "Authorize access", choose your Google account, click "Advanced", and then "Go to (unsafe)". This is normal because your app isn't verified by Google. Grant the permissions.
+      </li>
+      <li>
+        <strong>Get the URL:</strong> After deploying, a "Deployment successfully updated" window will appear. Copy the <strong>"Web app URL"</strong>. It will end in <code>/exec</code>.
+      </li>
+       <li>
+        <strong>Enter Settings Below:</strong> Paste the copied "Web app URL" into the "Google Apps Script URL" field below. Enter the exact same secret token you created in step 4 into the "Security Token" field.
+      </li>
+       <li>
+        <strong>Save Settings:</strong> Click the "Save Settings" button. The app will now be connected to your Google Sheet!
+      </li>
+    </ol>
+
+    <div class="bg-gray-900 rounded-lg shadow-lg my-4">
+        <div class="flex justify-between items-center px-4 py-2 bg-gray-800 rounded-t-lg">
+            <span class="text-gray-300 font-semibold">Google Apps Script (Code.gs)</span>
+            <button (click)="copyScript()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-1 px-3 rounded-md text-sm transition-colors duration-200">{{ copyButtonText() }}</button>
+        </div>
+        <pre class="p-4 text-sm text-white overflow-x-auto"><code>{{ appsScriptCode }}</code></pre>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,105 @@
+
+@if (loading()) {
+  <div class="flex flex-col items-center justify-center p-10 bg-white rounded-lg shadow-md">
+    <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-indigo-600"></div>
+    <p class="mt-4 text-xl text-gray-700">Loading Active Orders...</p>
+  </div>
+} @else {
+  <div class="p-6 bg-white rounded-lg shadow-md">
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-3xl font-bold text-gray-800">Active Order Management</h1>
+      <div class="flex items-center space-x-4">
+        @if (isAdmin()) {
+           <a routerLink="/order-database" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-md shadow-lg transition-colors duration-200 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+              <path fill-rule="evenodd" d="M4 5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h4a1 1 0 100-2H7zm0 4a1 1 0 100 2h4a1 1 0 100-2H7z" clip-rule="evenodd" />
+            </svg>
+            Completed Orders Database
+          </a>
+        }
+        <a routerLink="/orders/new" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md shadow-lg transition-colors duration-200 flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+          </svg>
+          Add New Order
+        </a>
+      </div>
+    </div>
+
+    @if (orders().length > 0) {
+      <div class="overflow-x-auto bg-white rounded-lg shadow-inner border">
+        <table class="min-w-full leading-normal">
+          <thead>
+            <tr class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+              <th class="py-3 px-6 text-left">Order No.</th>
+              <th class="py-3 px-6 text-left">Customer</th>
+              <th class="py-3 px-6 text-left">Job Description</th>
+              <th class="py-3 px-6 text-center">TAT (Days)</th>
+              <th class="py-3 px-6 text-center">Urgency</th>
+              <th class="py-3 px-6 text-center">Status</th>
+              <th class="py-3 px-6 text-center">Payment</th>
+              <th class="py-3 px-6 text-left">Assigned</th>
+              <th class="py-3 px-6 text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="text-gray-700 text-sm font-light">
+            @for (order of orders(); track order.id) {
+              <tr class="border-b border-gray-200 hover:bg-gray-50" [class.border-l-4]="order.jobUrgency === 'Urgent' || order.jobUrgency === 'High'" [class.border-red-500]="order.jobUrgency === 'Urgent'" [class.border-yellow-500]="order.jobUrgency === 'High'">
+                <td class="py-3 px-6 text-left whitespace-nowrap font-semibold">#{{ order.orderNo }}</td>
+                <td class="py-3 px-6 text-left whitespace-nowrap">{{ order.customerName }}</td>
+                <td class="py-3 px-6 text-left max-w-xs truncate" [title]="order.jobDescription">{{ order.jobDescription }}</td>
+                <td class="py-3 px-6 text-center font-semibold">{{ calculateTAT(order) }}</td>
+                <td class="py-3 px-6 text-center">
+                   <span class="py-1 px-3 rounded-full text-xs font-medium" [class.bg-gray-200]="order.jobUrgency === 'Normal'" [class.text-gray-800]="order.jobUrgency === 'Normal'" [class.bg-yellow-200]="order.jobUrgency === 'High'" [class.text-yellow-800]="order.jobUrgency === 'High'" [class.bg-red-200]="order.jobUrgency === 'Urgent'" [class.text-red-800]="order.jobUrgency === 'Urgent'">{{ order.jobUrgency }}</span>
+                </td>
+                <td class="py-3 px-6 text-center">
+                   <select [value]="order.status"
+                          (change)="updateOrderStatus(order, $event)"
+                          class="appearance-none w-full pl-3 pr-8 py-1.5 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md font-medium"
+                          [class.bg-blue-100]="order.status === 'Pending'" [class.text-blue-800]="order.status === 'Pending'" 
+                          [class.bg-yellow-100]="order.status === 'In Progress'" [class.text-yellow-800]="order.status === 'In Progress'"
+                          [class.bg-gray-100]="order.status === 'Hold'" [class.text-gray-800]="order.status === 'Hold'"
+                          [class.border-transparent]="true">
+                    <option value="Pending">Pending</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Hold">Hold</option>
+                    @if (isAdmin()) {
+                      <option value="Completed">Completed</option>
+                    }
+                  </select>
+                </td>
+                <td class="py-3 px-6 text-center">
+                  <span class="py-1 px-3 rounded-full text-xs font-medium" [class.bg-red-200]="order.paymentStatus === 'Pending'" [class.text-red-800]="order.paymentStatus === 'Pending'" [class.bg-green-200]="order.paymentStatus === 'Paid'" [class.text-green-800]="order.paymentStatus === 'Paid'">{{ order.paymentStatus }}</span>
+                </td>
+                <td class="py-3 px-6 text-left">{{ getUserName(order.assignedToUserId) }}</td>
+                <td class="py-3 px-6 text-center">
+                  <div class="flex item-center justify-center space-x-2">
+                    <button (click)="shareToken(order)" class="w-6 h-6 transform hover:text-blue-500 hover:scale-110" title="View & Share Token" aria-label="View & Share Token">
+                       <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                        <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.03 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                      </svg>
+                    </button>
+                    <a [routerLink]="['/orders/edit', order.id]" class="w-6 h-6 transform hover:text-indigo-500 hover:scale-110" title="Edit Order" aria-label="Edit Order">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                      </svg>
+                    </a>
+                    <button (click)="deleteOrder(order.id)" class="w-6 h-6 transform hover:text-red-500 hover:scale-110" title="Delete Order" aria-label="Delete Order">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <p class="text-gray-600 p-4 text-center">No active orders found. All orders are completed or none have been created yet.</p>
+    }
+  </div>
+}
