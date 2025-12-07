@@ -1,3 +1,4 @@
+
 import { Component, ChangeDetectionStrategy, inject, computed } from '@angular/core';
 import { DataService, Order } from '../../services/data.service';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
@@ -12,9 +13,9 @@ import { AuthService } from '../../services/auth.service';
   imports: [CommonModule, CurrencyPipe, DatePipe, RouterLink],
 })
 export class OrderDatabaseComponent {
-  private dataService = inject(DataService);
-  private authService = inject(AuthService);
-  private router = inject(Router);
+  private dataService: DataService = inject(DataService);
+  private authService: AuthService = inject(AuthService);
+  private router: Router = inject(Router);
 
   currentUser = this.authService.currentUser;
   isAdmin = computed(() => this.currentUser()?.role === 'Admin');

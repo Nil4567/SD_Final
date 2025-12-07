@@ -13,8 +13,8 @@ export interface LoginResult {
   providedIn: 'root'
 })
 export class AuthService {
-  private dataService = inject(DataService);
-  private router = inject(Router);
+  private dataService: DataService = inject(DataService);
+  private router: Router = inject(Router);
 
   private _currentUser = signal<User | null>(null);
   readonly currentUser = this._currentUser.asReadonly();

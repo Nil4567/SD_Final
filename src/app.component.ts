@@ -17,9 +17,8 @@ import { filter } from 'rxjs/operators';
   imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule]
 })
 export class AppComponent implements OnInit, OnDestroy {
-  private authService = inject(AuthService);
-  private router = inject(Router);
-  // FIX: Explicitly use an aliased import for `Location` to prevent ambiguity with the global DOM `Location` type.
+  private authService: AuthService = inject(AuthService);
+  private router: Router = inject(Router);
   private location: AngularLocation = inject(AngularLocation);
 
   title = 'SD Prints Management';

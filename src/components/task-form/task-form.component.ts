@@ -18,9 +18,9 @@ import { CommonModule } from '@angular/common';
 })
 export class TaskFormComponent implements OnInit {
   private fb: FormBuilder = inject(FormBuilder);
-  private dataService = inject(DataService);
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
+  private dataService: DataService = inject(DataService);
+  private route: ActivatedRoute = inject(ActivatedRoute);
+  private router: Router = inject(Router);
 
   taskForm!: FormGroup;
   isEditMode = false;

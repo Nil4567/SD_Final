@@ -1,3 +1,4 @@
+
 import { Component, ChangeDetectionStrategy, inject, signal, ElementRef, ViewChild, afterNextRender } from '@angular/core';
 import { DataService, Order } from '../../services/data.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -14,9 +15,9 @@ declare const html2canvas: any;
   imports: [CommonModule, CurrencyPipe, DatePipe]
 })
 export class PrintTokenComponent {
-  private dataService = inject(DataService);
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
+  private dataService: DataService = inject(DataService);
+  private route: ActivatedRoute = inject(ActivatedRoute);
+  private router: Router = inject(Router);
 
   @ViewChild('tokenElement') tokenElement!: ElementRef;
 

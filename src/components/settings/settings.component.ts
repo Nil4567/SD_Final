@@ -1,3 +1,4 @@
+
 import { Component, ChangeDetectionStrategy, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { SettingsService } from '../../services/settings.service';
@@ -12,9 +13,8 @@ import { AppsScriptGuideComponent } from '../apps-script-guide/apps-script-guide
   imports: [ReactiveFormsModule, CommonModule, AppsScriptGuideComponent],
 })
 export class SettingsComponent implements OnInit {
-  // FIX: Explicitly type the injected `FormBuilder` to resolve a type inference issue.
   private fb: FormBuilder = inject(FormBuilder);
-  private settingsService = inject(SettingsService);
+  private settingsService: SettingsService = inject(SettingsService);
 
   settingsForm!: FormGroup;
   saveStatus = signal<'idle' | 'success' | 'error'>('idle');

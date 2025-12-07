@@ -1,3 +1,4 @@
+
 import { Component, ChangeDetectionStrategy, inject, computed } from '@angular/core';
 import { DataService, Order } from '../../services/data.service';
 import { Router, RouterLink } from '@angular/router';
@@ -17,9 +18,9 @@ type OrderStatus = 'Pending' | 'In Progress' | 'Completed' | 'Hold';
   imports: [RouterLink, CurrencyPipe, DatePipe, CommonModule]
 })
 export class OrderListComponent {
-  private dataService = inject(DataService);
-  private authService = inject(AuthService);
-  private router = inject(Router);
+  private dataService: DataService = inject(DataService);
+  private authService: AuthService = inject(AuthService);
+  private router: Router = inject(Router);
 
   currentUser = this.authService.currentUser;
   isAdmin = computed(() => this.currentUser()?.role === 'Admin');

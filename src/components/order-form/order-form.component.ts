@@ -1,3 +1,4 @@
+
 import { Component, ChangeDetectionStrategy, OnInit, inject, signal, computed, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { DataService, Order, User } from '../../services/data.service';
@@ -18,9 +19,9 @@ import { Subscription } from 'rxjs';
 })
 export class OrderFormComponent implements OnInit, OnDestroy {
   private fb: FormBuilder = inject(FormBuilder);
-  private dataService = inject(DataService);
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
+  private dataService: DataService = inject(DataService);
+  private route: ActivatedRoute = inject(ActivatedRoute);
+  private router: Router = inject(Router);
 
   orderForm!: FormGroup;
   isEditMode = false;

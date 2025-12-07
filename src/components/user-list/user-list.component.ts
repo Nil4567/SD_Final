@@ -1,3 +1,4 @@
+
 import { Component, ChangeDetectionStrategy, inject, computed } from '@angular/core';
 import { DataService, User } from '../../services/data.service';
 import { AuthService } from '../../services/auth.service';
@@ -15,8 +16,8 @@ import { RouterLink } from '@angular/router';
   imports: [CommonModule, RouterLink, DatePipe]
 })
 export class UserListComponent {
-  private dataService = inject(DataService);
-  private authService = inject(AuthService);
+  private dataService: DataService = inject(DataService);
+  private authService: AuthService = inject(AuthService);
 
   readonly superAdminUser: User = {
     id: 'admin-superuser',

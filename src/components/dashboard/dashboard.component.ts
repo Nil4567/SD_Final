@@ -17,9 +17,9 @@ import { AuthService } from '../../services/auth.service';
   imports: [CurrencyPipe, DatePipe, RouterLink, CommonModule]
 })
 export class DashboardComponent {
-  private dataService = inject(DataService);
-  private settingsService = inject(SettingsService);
-  private authService = inject(AuthService);
+  private dataService: DataService = inject(DataService);
+  private settingsService: SettingsService = inject(SettingsService);
+  private authService: AuthService = inject(AuthService);
 
   currentUser = this.authService.currentUser;
   isAdmin = computed(() => this.currentUser()?.role === 'Admin');

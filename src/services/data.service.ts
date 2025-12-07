@@ -44,7 +44,7 @@ export interface Task {
   providedIn: 'root'
 })
 export class DataService implements OnDestroy {
-  private settingsService = inject(SettingsService);
+  private settingsService: SettingsService = inject(SettingsService);
 
   // --- STATE SIGNALS ---
   private _users = signal<User[]>([]);

@@ -1,3 +1,4 @@
+
 import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { DataService, Task } from '../../services/data.service';
 import { RouterLink } from '@angular/router';
@@ -16,7 +17,7 @@ type TaskStatus = 'Open' | 'In Progress' | 'Done';
   imports: [RouterLink, DatePipe, CommonModule]
 })
 export class TaskListComponent {
-  private dataService = inject(DataService);
+  private dataService: DataService = inject(DataService);
 
   tasks = this.dataService.tasks;
   users = this.dataService.users;

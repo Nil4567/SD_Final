@@ -1,4 +1,5 @@
 
+
 import { Component, ChangeDetectionStrategy, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
@@ -17,8 +18,8 @@ import { CommonModule } from '@angular/common';
 })
 export class LoginComponent implements OnInit {
   private fb: FormBuilder = inject(FormBuilder);
-  private authService = inject(AuthService);
-  private router = inject(Router);
+  private authService: AuthService = inject(AuthService);
+  private router: Router = inject(Router);
 
   loginForm!: FormGroup;
   loginError = signal<string | null>(null);
