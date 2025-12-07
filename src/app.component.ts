@@ -2,7 +2,7 @@
 import { Component, ChangeDetectionStrategy, inject, computed, OnInit, OnDestroy, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { AuthService } from './services/auth.service';
-import { CommonModule, Location } from '@angular/common';
+import { CommonModule, Location as AngularLocation } from '@angular/common';
 import { Subscription, interval } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
@@ -19,8 +19,8 @@ import { filter } from 'rxjs/operators';
 export class AppComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private router = inject(Router);
-  // FIX: Explicitly type the injected `Location` service to resolve ambiguity with the global DOM `Location` type.
-  private location: Location = inject(Location);
+  // FIX: Explicitly use an aliased import for `Location` to prevent ambiguity with the global DOM `Location` type.
+  private location: AngularLocation = inject(AngularLocation);
 
   title = 'SD Prints Management';
   isLoggedIn = this.authService.isLoggedIn;
