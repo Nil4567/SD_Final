@@ -1,7 +1,8 @@
+
 import { Component, ChangeDetectionStrategy, inject, computed, OnInit, OnDestroy, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { AuthService } from './services/auth.service';
-import { CommonModule, DatePipe, Location } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { Subscription, interval } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
@@ -13,7 +14,7 @@ import { filter } from 'rxjs/operators';
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule, DatePipe]
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule]
 })
 export class AppComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
