@@ -1,10 +1,10 @@
-import { Component, ChangeDetectionStrategy, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, inject, signal, computed, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { DataService, Order, User } from '../../services/data.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule, CurrencyPipe } from '@angular/common';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { debounceTime } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-order-form',
@@ -16,7 +16,7 @@ import { debounceTime } from 'rxjs/operators';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ReactiveFormsModule, CommonModule, CurrencyPipe]
 })
-export class OrderFormComponent implements OnInit {
+export class OrderFormComponent implements OnInit, OnDestroy {
   private fb: FormBuilder = inject(FormBuilder);
   private dataService = inject(DataService);
   private route = inject(ActivatedRoute);
@@ -31,17 +31,14 @@ export class OrderFormComponent implements OnInit {
   orderNo = signal<number>(0);
   orderToken = signal<string>('');
 
-  // Signal for contact number to check for regular customers
-  private contactNoSignal = toSignal(
-    this.fb.group({ contactNo: [''] }).controls['contactNo'].valueChanges.pipe(debounceTime(300)), 
-    { initialValue: '' }
-  );
+  private contactNo = signal<string>('');
+  private contactNoSub: Subscription | undefined;
+
   isRegularCustomer = computed(() => {
-    const contactNo = this.contactNoSignal();
-    // FIX: Add a type guard for `contactNo` as its type is inferred as `unknown` from the form control's `valueChanges`.
-    if (typeof contactNo !== 'string' || !contactNo || contactNo.length < 10) return false;
+    const contact = this.contactNo();
+    if (!contact || contact.length < 10) return false;
     // Check if more than one order exists with this contact number (or one if we are not in edit mode)
-    const orderCount = this.dataService.orders().filter(o => o.contactNo === contactNo).length;
+    const orderCount = this.dataService.orders().filter(o => o.contactNo === contact).length;
     
     // In edit mode, a regular has > 1 order. In new mode, a regular has >= 1 order.
     if (this.isEditMode) {
@@ -83,11 +80,19 @@ export class OrderFormComponent implements OnInit {
       this.orderToken.set('SDP-' + Math.floor(1000 + Math.random() * 9000));
     }
     
-    // Link the form control to the signal for regular customer check
-    this.contactNoSignal = toSignal(
-      this.orderForm.controls['contactNo'].valueChanges.pipe(debounceTime(300)),
-      { initialValue: this.orderForm.controls['contactNo'].value }
-    );
+    // Set initial value for the signal
+    this.contactNo.set(this.orderForm.controls['contactNo'].value);
+
+    // Subscribe to changes to update the signal
+    this.contactNoSub = this.orderForm.controls['contactNo'].valueChanges.pipe(
+      debounceTime(300)
+    ).subscribe(value => {
+      this.contactNo.set(value);
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.contactNoSub?.unsubscribe();
   }
 
   initForm(): void {
